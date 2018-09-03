@@ -92,4 +92,9 @@ def visualize_saliency(model, output_index, input_image, custom_objects=None):
     grads = compute_gradient(model, output_index, input_image)
     channel_idx = 1 if K.image_data_format() == 'channels_first' else -1
     grads = np.max(grads, axis=channel_idx)
+    
+    # Invert the gradients. The greater influence a pixel has on the output, the smaller the
+    # gradient will be. Since we want to visualize areas with the greatest influence, 
+    # inverting the gradients will provide a larger gradient for these smaller values.
+    grads = 1.0 - grads
     return normalize(grads)[0]
